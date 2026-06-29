@@ -1,0 +1,144 @@
+﻿@model IEnumerable<orderfood.Models.FoodItem>
+
+@{
+    ViewData["Title"] = "لوحة تحكم الإدارة - Order Food";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<style>
+    body {
+        background-color: #fff8f0; /* الخلفية البيج المريحة المستوحاة من الموقع */
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .custom-header {
+        background-color: #e52d3d; /* الأحمر المميز لشعار Order Food */
+        color: #ffffff;
+        border-radius: 12px;
+    }
+
+    .btn-custom-orange {
+        background-color: #ff9800; /* البرتقالي الخاص بأزرار الطلب والتقييم */
+        color: white;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+        .btn-custom-orange:hover {
+            background-color: #e68a00;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+    .card-search {
+        border: 2px solid #ff9800;
+        background-color: #ffffff;
+        border-radius: 10px;
+    }
+
+    .table-thead-custom {
+        background-color: #e52d3d;
+        color: white;
+    }
+
+    .text-orange {
+        color: #ff9800;
+    }
+
+    .text-red {
+        color: #e52d3d;
+    }
+</style>
+
+<div class="container mt-4" dir="rtl" style="text-align: right;">
+
+    <div class="p-4 mb-4 custom-header shadow text-center position-relative">
+        <div class="d-flex justify-content-center align-items-center gap-3 mb-2">
+            <h1 class="fw-bold m-0"><i class="fa-solid fa-utensils"></i> لوحة تحكم الإدارة (Admin)</h1>
+        </div>
+        <p class="lead m-0">تعديل، إضافة، وحذف الوجبات وتحديث البيانات لتظهر فوراً في واجهة المستخدم</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <div class="card card-search shadow-sm">
+                <div class="card-body p-3">
+                    <h5 class="card-title mb-3 fw-bold text-dark">
+                        <i class="fa-solid fa-magnifying-glass text-orange me-2"></i> بحث سريع عن وجبة
+                    </h5>
+                    <form asp-action="Index" method="get">
+                        <div class="row g-2 align-items-center">
+                            <div class="col-md-9">
+                                <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" class="form-control text-right" placeholder="اكتب اسم الوجبة هنا لفلترتها فوراً..." style="border-color: #ff9800;">
+                            </div>
+                            <div class="col-md-3 d-grid gap-2 d-md-flex">
+                                <button type="submit" class="btn btn-custom-orange flex-grow-1"><i class="fa-solid fa-filter me-1"></i> تصفية</button>
+                                <a asp-action="Index" class="btn btn-outline-secondary"><i class="fa-solid fa-rotate-left"></i></a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12 mb-3 text-start">
+            <a asp-action="Create" class="btn btn-custom-orange btn-lg shadow-sm px-4">
+                <i class="fa-solid fa-plus-circle me-1"></i> إضافة وجبة جديدة للمنيو
+            </a>
+        </div>
+
+        <div class="col-md-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 text-center">
+                            <thead class="table-thead-custom text-white fw-bold">
+                                <tr>
+                                    <th class="py-3">اسم الوجبة</th>
+                                    <th class="py-3">المكونات والمقادير</th>
+                                    <th class="py-3">السعر الأساسي</th>
+                                    <th class="py-3">قيمة الخصم</th>
+                                    <th class="py-3">خيارات التحكم الإداري</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model == null || !Model.Any())
+                                {
+                                    <tr>
+                                        <td colspan="5" class="py-5 text-muted fs-5">
+                                            <i class="fa-solid fa-circle-exclamation display-4 d-block mb-2 text-orange"></i>
+                                            لم يتم العثور على وجبات تطابق بحثك حالياً.
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td class="fw-bold text-dark py-3">🍔 @item.Name</td>
+                                            <td class="text-muted text-wrap" style="max-width: 250px;">@item.Components</td>
+                                            <td class="fw-bold text-success">@item.Price.ToString("0.00") $</td>
+                                            <td class="fw-bold text-red">@item.Discount.ToString("0.00") $</td>
+                                            <td>
+                                                <div class="d-flex justify-content-center gap-2">
+                                                    <a asp-action="Edit" asp-route-id="@item.ItemId" class="btn btn-outline-warning btn-sm px-3 fw-bold">
+                                                        <i class="fa-solid fa-marker me-1"></i> تعديل
+                                                    </a>
+                                                    <a asp-action="Delete" asp-route-id="@item.ItemId" class="btn btn-outline-danger btn-sm px-3 fw-bold" onclick="return confirm('هل أنت متأكد من حذف هذه الوجبة نهائياً؟');">
+                                                        <i class="fa-solid fa-trash me-1"></i> حذف
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
