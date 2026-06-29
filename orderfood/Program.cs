@@ -1,4 +1,4 @@
-using orderfood.Models; // åĞÇ ÇáÓØÑ íÍá ÇáãÔßáÉ İæÑÇğ æíÌÚá ÇáÓíÇŞ ãÑÆíÇğ áãáİ Program
+using orderfood.Models; 
 using Microsoft.EntityFrameworkCore;
 
 
@@ -12,7 +12,7 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// 2. ÇáÃãÑ ÇáÓÍÑí ÇáÈÏíá ááÜ Migration áÊæáíÏ ŞÇÚÏÉ ÇáÈíÇäÇÊ ÊáŞÇÆíÇğ İæÑÇğ
+// 2. ÊæáíÏ ŞÇÚÏÉ ÇáÈíÇäÇÊ ÊáŞÇÆíÇğ 
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -30,7 +30,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthorization();
 
-// ÌÚá ÕİÍÉ ÇáæÌÈÇÊ (ÇáÊí ÓäŞæã ÈÚãá ÇáÜ CRUD áåÇ) åí ÇáÕİÍÉ ÇáÑÆíÓíÉ ááãæŞÚ
+//  åí ÇáÕİÍÉ ÇáÑÆíÓíÉ ááãæŞÚ
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=FoodItems}/{action=Index}/{id?}");

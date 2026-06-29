@@ -1,25 +1,25 @@
 ﻿@model IEnumerable<orderfood.Models.FoodItem>
 
 @{
-    ViewData["Title"] = "لوحة تحكم الإدارة - Order Food";
+    ViewData["Title"] = "لوحة تحكم الإدارة - نظام المطاعم";
 }
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
 <style>
     body {
-        background-color: #fff8f0; /* الخلفية البيج المريحة المستوحاة من الموقع */
+        background-color: #fff8f0;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     .custom-header {
-        background-color: #e52d3d; /* الأحمر المميز لشعار Order Food */
+        background-color: #e52d3d;
         color: #ffffff;
         border-radius: 12px;
     }
 
     .btn-custom-orange {
-        background-color: #ff9800; /* البرتقالي الخاص بأزرار الطلب والتقييم */
+        background-color: #ff9800;
         color: white;
         font-weight: bold;
         transition: all 0.3s ease;
@@ -49,15 +49,21 @@
     .text-red {
         color: #e52d3d;
     }
+
+    .badge-restaurant {
+        background-color: #ff9800;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+    }
 </style>
 
 <div class="container mt-4" dir="rtl" style="text-align: right;">
 
-    <div class="p-4 mb-4 custom-header shadow text-center position-relative">
-        <div class="d-flex justify-content-center align-items-center gap-3 mb-2">
-            <h1 class="fw-bold m-0"><i class="fa-solid fa-utensils"></i> لوحة تحكم الإدارة (Admin)</h1>
-        </div>
-        <p class="lead m-0">تعديل، إضافة، وحذف الوجبات وتحديث البيانات لتظهر فوراً في واجهة المستخدم</p>
+    <div class="p-4 mb-4 custom-header shadow text-center">
+        <h1 class="fw-bold m-0"><i class="fa-solid fa-hotel"></i> لوحة إدارة المطاعم المتعددة</h1>
+        <p class="lead m-0 mt-2">إدارة الوجبات، الأسعار، وتصنيفها حسب اسم المطعم التابع لها</p>
     </div>
 
     <div class="row">
@@ -65,12 +71,12 @@
             <div class="card card-search shadow-sm">
                 <div class="card-body p-3">
                     <h5 class="card-title mb-3 fw-bold text-dark">
-                        <i class="fa-solid fa-magnifying-glass text-orange me-2"></i> بحث سريع عن وجبة
+                        <i class="fa-solid fa-magnifying-glass text-orange me-2"></i> محرك البحث الذكي
                     </h5>
                     <form asp-action="Index" method="get">
                         <div class="row g-2 align-items-center">
                             <div class="col-md-9">
-                                <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" class="form-control text-right" placeholder="اكتب اسم الوجبة هنا لفلترتها فوراً..." style="border-color: #ff9800;">
+                                <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" class="form-control text-right" placeholder="ابحث باسم الوجبة أو اسم المطعم..." style="border-color: #ff9800;">
                             </div>
                             <div class="col-md-3 d-grid gap-2 d-md-flex">
                                 <button type="submit" class="btn btn-custom-orange flex-grow-1"><i class="fa-solid fa-filter me-1"></i> تصفية</button>
@@ -84,7 +90,7 @@
 
         <div class="col-md-12 mb-3 text-start">
             <a asp-action="Create" class="btn btn-custom-orange btn-lg shadow-sm px-4">
-                <i class="fa-solid fa-plus-circle me-1"></i> إضافة وجبة جديدة للمنيو
+                <i class="fa-solid fa-plus-circle me-1"></i> إضافة وجبة جديدة
             </a>
         </div>
 
@@ -95,6 +101,7 @@
                         <table class="table table-hover align-middle mb-0 text-center">
                             <thead class="table-thead-custom text-white fw-bold">
                                 <tr>
+                                    <th class="py-3">المطعم</th>
                                     <th class="py-3">اسم الوجبة</th>
                                     <th class="py-3">المكونات والمقادير</th>
                                     <th class="py-3">السعر الأساسي</th>
@@ -106,9 +113,9 @@
                                 @if (Model == null || !Model.Any())
                                 {
                                     <tr>
-                                        <td colspan="5" class="py-5 text-muted fs-5">
+                                        <td colspan="6" class="py-5 text-muted fs-5">
                                             <i class="fa-solid fa-circle-exclamation display-4 d-block mb-2 text-orange"></i>
-                                            لم يتم العثور على وجبات تطابق بحثك حالياً.
+                                            لا توجد نتائج تطابق بحثك حالياً.
                                         </td>
                                     </tr>
                                 }
@@ -117,8 +124,9 @@
                                     @foreach (var item in Model)
                                     {
                                         <tr>
-                                            <td class="fw-bold text-dark py-3">🍔 @item.Name</td>
-                                            <td class="text-muted text-wrap" style="max-width: 250px;">@item.Components</td>
+                                            <td class="py-3"><span class="badge-restaurant"><i class="fa-solid fa-store me-1"></i> @item.RestaurantName</span></td>
+                                            <td class="fw-bold text-dark">🍔 @item.Name</td>
+                                            <td class="text-muted text-wrap" style="max-width: 200px;">@item.Components</td>
                                             <td class="fw-bold text-success">@item.Price.ToString("0.00") $</td>
                                             <td class="fw-bold text-red">@item.Discount.ToString("0.00") $</td>
                                             <td>
@@ -126,7 +134,7 @@
                                                     <a asp-action="Edit" asp-route-id="@item.ItemId" class="btn btn-outline-warning btn-sm px-3 fw-bold">
                                                         <i class="fa-solid fa-marker me-1"></i> تعديل
                                                     </a>
-                                                    <a asp-action="Delete" asp-route-id="@item.ItemId" class="btn btn-outline-danger btn-sm px-3 fw-bold" onclick="return confirm('هل أنت متأكد من حذف هذه الوجبة نهائياً؟');">
+                                                    <a asp-action="Delete" asp-route-id="@item.ItemId" class="btn btn-outline-danger btn-sm px-3 fw-bold" onclick="return confirm('هل متأكد من الحذف؟');">
                                                         <i class="fa-solid fa-trash me-1"></i> حذف
                                                     </a>
                                                 </div>

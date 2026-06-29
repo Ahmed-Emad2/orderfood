@@ -16,19 +16,24 @@ namespace orderfood.Controllers
         }
 
         // 1. شاشة العرض الرئيسية + ميزة البحث (Search)
-        public async Task<IActionResult> Index(string searchString)
+       
+        
+          public async Task<IActionResult> Index(string searchString)
         {
+            ViewData["CurrentFilter"] = searchString;
+
+            // جلب الوجبات
             var foodItems = from f in _context.FoodItems select f;
 
-            // إذا كتب المستخدم في خانة البحث، يتم الفلترة فوراً
-            if (!string.IsNullOrEmpty(searchString))
+            // الفلترة الذكية بناءً على اسم الوجبة أو اسم المطعم
+            if (!String.IsNullOrEmpty(searchString))
             {
-                foodItems = foodItems.Where(s => s.Name.Contains(searchString));
+                foodItems = foodItems.Where(s => s.Name.Contains(searchString) || s.RestaurantName.Contains(searchString));
             }
 
-            ViewData["CurrentFilter"] = searchString;
-            return View("~/Views/FoodItems/Index.cshtml", await foodItems.ToListAsync()); ;
+            return View("~/Views/FoodItems/Index.cshtml", await foodItems.ToListAsync());
         }
+        
 
         // 2. شاشة إضافة وجبة جديدة (GET)
         public IActionResult Create()
@@ -39,17 +44,19 @@ namespace orderfood.Controllers
         // شاشة إضافة وجبة جديدة (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ItemId,Name,Components,Price,Discount")] FoodItem foodItem)
+        public async Task<IActionResult> Create([Bind("ItemId,RestaurantName,Name,Components,Price,Discount")] FoodItem foodItem)
         {
             if (ModelState.IsValid)
             {
+                // إضافة الوجبة الجديدة إلى قاعدة البيانات
                 _context.Add(foodItem);
                 await _context.SaveChangesAsync();
-                return View("~/Views/FoodItems/Create.cshtml");
+
+                // إعادة التوجيه لصفحة الجدول الرئيسية لرؤية النتيجة فوراً
+                return RedirectToAction(nameof(Index));
             }
             return View(foodItem);
         }
-
         // 3. شاشة التعديل (GET)
         public async Task<IActionResult> Edit(int? id)
         {
@@ -75,7 +82,7 @@ namespace orderfood.Controllers
             return View(foodItem);
         }
 
-        // 4. حذف وجبة (مباشر وسريع)
+        // 4. حذف وجبة )
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
