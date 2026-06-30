@@ -16,16 +16,16 @@ namespace orderfood.Controllers
         }
 
         // 1. شاشة العرض الرئيسية + ميزة البحث (Search)
-       
-        
-          public async Task<IActionResult> Index(string searchString)
+
+
+        public async Task<IActionResult> Index(string searchString, string role = "Admin")
         {
             ViewData["CurrentFilter"] = searchString;
+            // نرسل الصلاحية الحالية للواجهة لكي تتحكم في ظهور الأزرار
+            ViewData["CurrentRole"] = role;
 
-            // جلب الوجبات
             var foodItems = from f in _context.FoodItems select f;
 
-            // الفلترة الذكية بناءً على اسم الوجبة أو اسم المطعم
             if (!String.IsNullOrEmpty(searchString))
             {
                 foodItems = foodItems.Where(s => s.Name.Contains(searchString) || s.RestaurantName.Contains(searchString));
@@ -33,7 +33,7 @@ namespace orderfood.Controllers
 
             return View("~/Views/FoodItems/Index.cshtml", await foodItems.ToListAsync());
         }
-        
+
 
         // 2. شاشة إضافة وجبة جديدة (GET)
         public IActionResult Create()

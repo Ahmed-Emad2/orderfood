@@ -1,7 +1,9 @@
 ﻿@model IEnumerable<orderfood.Models.FoodItem>
 
 @{
-    ViewData["Title"] = "لوحة تحكم الإدارة - نظام المطاعم";
+    ViewData["Title"] = "نظام المطاعم - إدارة الصلاحيات";
+    // قراءة الصلاحية الحالية (إما Admin أو User)
+    string currentRole = ViewData["CurrentRole"]?.ToString() ?? "Admin";
 }
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -57,9 +59,28 @@
         border-radius: 20px;
         font-size: 0.9rem;
     }
+
+    .auth-simulator {
+        background-color: #f8f9fa;
+        border: 1px dashed #ced4da;
+        border-radius: 8px;
+    }
 </style>
 
 <div class="container mt-4" dir="rtl" style="text-align: right;">
+
+    <div class="auth-simulator p-3 mb-3 d-flex justify-content-between align-items-center shadow-sm">
+        <div>
+            <span class="fw-bold text-secondary"><i class="fa-solid fa-user-shield"></i> محاكاة نظام الصلاحيات (Identity):</span>
+            <span class="badge @(currentRole == "Admin" ? "bg-danger" : "bg-primary") ms-2 px-3 py-2" style="font-size:0.95rem">
+                الحساب الحالي: @(currentRole == "Admin" ? "مدير النظام (Admin)" : "مستعرض عادي (User)")
+            </span>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="?role=Admin&searchString=@ViewData["CurrentFilter"]" class="btn btn-sm btn-outline-danger @(currentRole == "Admin" ? "active fw-bold" : "")">👑 تسجيل كـ Admin</a>
+            <a href="?role=User&searchString=@ViewData["CurrentFilter"]" class="btn btn-sm btn-outline-primary @(currentRole == "User" ? "active fw-bold" : "")">👤 تسجيل كـ User</a>
+        </div>
+    </div>
 
     <div class="p-4 mb-4 custom-header shadow text-center">
         <h1 class="fw-bold m-0"><i class="fa-solid fa-hotel"></i> لوحة إدارة المطاعم المتعددة</h1>
@@ -74,13 +95,14 @@
                         <i class="fa-solid fa-magnifying-glass text-orange me-2"></i> محرك البحث الذكي
                     </h5>
                     <form asp-action="Index" method="get">
+                        <input type="hidden" name="role" value="@currentRole" />
                         <div class="row g-2 align-items-center">
                             <div class="col-md-9">
                                 <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" class="form-control text-right" placeholder="ابحث باسم الوجبة أو اسم المطعم..." style="border-color: #ff9800;">
                             </div>
                             <div class="col-md-3 d-grid gap-2 d-md-flex">
                                 <button type="submit" class="btn btn-custom-orange flex-grow-1"><i class="fa-solid fa-filter me-1"></i> تصفية</button>
-                                <a asp-action="Index" class="btn btn-outline-secondary"><i class="fa-solid fa-rotate-left"></i></a>
+                                <a href="?role=@currentRole" class="btn btn-outline-secondary"><i class="fa-solid fa-rotate-left"></i></a>
                             </div>
                         </div>
                     </form>
@@ -88,11 +110,14 @@
             </div>
         </div>
 
-        <div class="col-md-12 mb-3 text-start">
-            <a asp-action="Create" class="btn btn-custom-orange btn-lg shadow-sm px-4">
-                <i class="fa-solid fa-plus-circle me-1"></i> إضافة وجبة جديدة
-            </a>
-        </div>
+        @if (currentRole == "Admin")
+        {
+            <div class="col-md-12 mb-3 text-start">
+                <a asp-action="Create" class="btn btn-custom-orange btn-lg shadow-sm px-4">
+                    <i class="fa-solid fa-plus-circle me-1"></i> إضافة وجبة جديدة (صلاحية مدير)
+                </a>
+            </div>
+        }
 
         <div class="col-md-12">
             <div class="card shadow-sm border-0">
@@ -106,14 +131,17 @@
                                     <th class="py-3">المكونات والمقادير</th>
                                     <th class="py-3">السعر الأساسي</th>
                                     <th class="py-3">قيمة الخصم</th>
-                                    <th class="py-3">خيارات التحكم الإداري</th>
+                                    @if (currentRole == "Admin")
+                                    {
+                                        <th class="py-3">خيارات التحكم الإداري</th>
+                                    }
                                 </tr>
                             </thead>
                             <tbody>
                                 @if (Model == null || !Model.Any())
                                 {
                                     <tr>
-                                        <td colspan="6" class="py-5 text-muted fs-5">
+                                        <td colspan="@(currentRole == "Admin" ? 6 : 5)" class="py-5 text-muted fs-5">
                                             <i class="fa-solid fa-circle-exclamation display-4 d-block mb-2 text-orange"></i>
                                             لا توجد نتائج تطابق بحثك حالياً.
                                         </td>
@@ -129,16 +157,20 @@
                                             <td class="text-muted text-wrap" style="max-width: 200px;">@item.Components</td>
                                             <td class="fw-bold text-success">@item.Price.ToString("0.00") $</td>
                                             <td class="fw-bold text-red">@item.Discount.ToString("0.00") $</td>
-                                            <td>
-                                                <div class="d-flex justify-content-center gap-2">
-                                                    <a asp-action="Edit" asp-route-id="@item.ItemId" class="btn btn-outline-warning btn-sm px-3 fw-bold">
-                                                        <i class="fa-solid fa-marker me-1"></i> تعديل
-                                                    </a>
-                                                    <a asp-action="Delete" asp-route-id="@item.ItemId" class="btn btn-outline-danger btn-sm px-3 fw-bold" onclick="return confirm('هل متأكد من الحذف؟');">
-                                                        <i class="fa-solid fa-trash me-1"></i> حذف
-                                                    </a>
-                                                </div>
-                                            </td>
+
+                                            @if (currentRole == "Admin")
+                                            {
+                                                <td>
+                                                    <div class="d-flex justify-content-center gap-2">
+                                                        <a asp-action="Edit" asp-route-id="@item.ItemId" class="btn btn-outline-warning btn-sm px-3 fw-bold">
+                                                            <i class="fa-solid fa-marker me-1"></i> تعديل
+                                                        </a>
+                                                        <a asp-action="Delete" asp-route-id="@item.ItemId" class="btn btn-outline-danger btn-sm px-3 fw-bold" onclick="return confirm('هل متأكد من الحذف؟');">
+                                                            <i class="fa-solid fa-trash me-1"></i> حذف
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            }
                                         </tr>
                                     }
                                 }
