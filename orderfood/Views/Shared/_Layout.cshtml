@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - orderfood</title>
+    <title>@ViewData["Title"] - نظام إدارة المطاعم</title>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -12,7 +12,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <style>
-        /* تنسيق مخصص لجعل الهيدر متناسقاً مع ألوان الهوية البصرية */
+        body {
+            background-color: #fff8f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
         .navbar-custom {
             background-color: #ffffff;
             border-bottom: 3px solid #ff9800;
@@ -27,6 +31,19 @@
 
             .nav-link-custom:hover {
                 color: #e52d3d !important;
+            }
+
+        .btn-orange-custom {
+            background-color: #ff9800;
+            color: white !important;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+            .btn-orange-custom:hover {
+                background-color: #e68a00;
+                transform: translateY(-1px);
             }
     </style>
 </head>
@@ -44,10 +61,16 @@
                 </button>
 
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1 mgr-auto text-right pr-0">
+                    <ul class="navbar-nav flex-grow-1 d-flex justify-content-between align-items-center w-100 pr-0 ms-auto me-auto">
                         <li class="nav-item">
                             <a class="nav-link nav-link-custom" asp-area="" asp-controller="FoodItems" asp-action="Index">
-                                <i class="fa-solid fa-list-check me-1"></i> إدارة الوجبات الحالية
+                                <i class="fa-solid fa-list-check me-1 text-orange"></i> قائمة الوجبات والمطاعم
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="btn btn-sm btn-orange-custom px-3 py-2 shadow-sm" asp-controller="FoodItems" asp-action="Login">
+                                <i class="fa-solid fa-user-shield me-1"></i> تسجيل الدخول / إدارة النظام
                             </a>
                         </li>
                     </ul>
@@ -61,12 +84,6 @@
             @RenderBody()
         </main>
     </div>
-
-    <footer class="border-top footer text-muted text-center bg-white py-3 mt-5">
-        <div class="container">
-            &copy; 2026 - <span class="fw-bold text-dark">نظام إدارة المطاعم المتعددة</span> - جميع الحقوق محفوظة.
-        </div>
-    </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

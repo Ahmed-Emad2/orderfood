@@ -1,0 +1,104 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>إنشاء حساب جديد - نظام إدارة المطاعم</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        body {
+            background-color: #fff8f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .register-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            background-color: #ffffff;
+            max-width: 420px;
+            width: 100%;
+        }
+
+        .register-header {
+            background-color: #ff9800;
+            color: white;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .btn-register {
+            background-color: #e52d3d;
+            color: white;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+            .btn-register:hover {
+                background-color: #c32432;
+                color: white;
+                transform: translateY(-2px);
+            }
+
+        .form-control, .form-select {
+            border-color: #ced4da;
+        }
+
+            .form-control:focus, .form-select:focus {
+                border-color: #e52d3d;
+                box-shadow: 0 0 0 0.25rem rgba(229, 45, 61, 0.25);
+            }
+    </style>
+</head>
+<body>
+
+    <div class="register-card shadow">
+        <div class="register-header">
+            <h3 class="fw-bold m-0"><i class="fa-solid fa-user-plus mb-2"></i> إنشاء حساب جديد</h3>
+            <p class="m-0 small">انضم إلى منظومة إدارة المطاعم المتعددة</p>
+        </div>
+        <div class="card-body p-4 text-right" style="text-align: right;">
+            <form asp-action="Register" method="post">
+                <div class="mb-3">
+                    <label class="form-label fw-bold text-dark"><i class="fa-solid fa-user text-muted me-1"></i> اسم المستخدم</label>
+                    <input type="text" name="username" class="form-control" placeholder="مثال: ahmed12" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold text-dark"><i class="fa-solid fa-envelope text-muted me-1"></i> البريد الإلكتروني</label>
+                    <input type="email" name="email" class="form-control" placeholder="user@restaurant.com" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold text-dark"><i class="fa-solid fa-lock text-muted me-1"></i> كلمة المرور</label>
+                    <input type="password" name="password" class="form-control" placeholder="••••••••" required />
+                </div>
+                <div class="mb-4">
+                    <label class="form-label fw-bold text-dark"><i class="fa-solid fa-user-tag text-muted me-1"></i> نوع الحساب المراد إنشاؤه</label>
+                    <select name="role" class="form-select" style="border-color: #ff9800; font-weight: bold;">
+                        <option value="User">👤 مستخدم عادي (User - للعرض والبحث)</option>
+                        <option value="Admin">👑 مدير نظام (Admin - تحكم كامل CRUD)</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-register w-100 btn-lg mb-3">
+                    <i class="fa-solid fa-check-circle me-1"></i> تسجيل الحساب وتفعيله
+                </button>
+                <div class="text-center">
+                    <span class="text-muted small">لديك حساب بالفعل؟</span>
+                    <a asp-action="Login" class="text-warning fw-bold small text-decoration-none ms-1">تسجيل الدخول</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>

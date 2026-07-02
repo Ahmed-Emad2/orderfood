@@ -69,18 +69,6 @@
 
 <div class="container mt-4" dir="rtl" style="text-align: right;">
 
-    <div class="auth-simulator p-3 mb-3 d-flex justify-content-between align-items-center shadow-sm">
-        <div>
-            <span class="fw-bold text-secondary"><i class="fa-solid fa-user-shield"></i> محاكاة نظام الصلاحيات (Identity):</span>
-            <span class="badge @(currentRole == "Admin" ? "bg-danger" : "bg-primary") ms-2 px-3 py-2" style="font-size:0.95rem">
-                الحساب الحالي: @(currentRole == "Admin" ? "مدير النظام (Admin)" : "مستعرض عادي (User)")
-            </span>
-        </div>
-        <div class="d-flex gap-2">
-            <a href="?role=Admin&searchString=@ViewData["CurrentFilter"]" class="btn btn-sm btn-outline-danger @(currentRole == "Admin" ? "active fw-bold" : "")">👑 تسجيل كـ Admin</a>
-            <a href="?role=User&searchString=@ViewData["CurrentFilter"]" class="btn btn-sm btn-outline-primary @(currentRole == "User" ? "active fw-bold" : "")">👤 تسجيل كـ User</a>
-        </div>
-    </div>
 
     <div class="p-4 mb-4 custom-header shadow text-center">
         <h1 class="fw-bold m-0"><i class="fa-solid fa-hotel"></i> لوحة إدارة المطاعم المتعددة</h1>

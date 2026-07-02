@@ -57,26 +57,52 @@ namespace orderfood.Controllers
             }
             return View(foodItem);
         }
-        // 3. شاشة التعديل (GET)
+        // 1. دالة عرض صفحة التعديل (تأخذ المعرّف وتجلب البيانات)
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
             var foodItem = await _context.FoodItems.FindAsync(id);
-            if (foodItem == null) return NotFound();
+            if (foodItem == null)
+            {
+                return NotFound();
+            }
             return View(foodItem);
         }
 
-        // شاشة التعديل (POST)
+        // 2. دالة استقبال البيانات المعدلة وحفظها (أضفنا فيها RestaurantName)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ItemId,Name,Components,Price,Discount")] FoodItem foodItem)
+        public async Task<IActionResult> Edit(int id, [Bind("ItemId,RestaurantName,Name,Components,Price,Discount")] FoodItem foodItem)
         {
-            if (id != foodItem.ItemId) return NotFound();
+            if (id != foodItem.ItemId)
+            {
+                return NotFound();
+            }
 
             if (ModelState.IsValid)
             {
-                _context.Update(foodItem);
-                await _context.SaveChangesAsync();
+                try
+                {
+                    _context.Update(foodItem);
+                    await _context.SaveChangesAsync();
+                }
+                catch (Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException)
+                {
+                    if (!_context.FoodItems.Any(e => e.ItemId == foodItem.ItemId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                // العودة للوحة التحكم بعد نجاح التعديل
                 return RedirectToAction(nameof(Index));
             }
             return View(foodItem);
@@ -93,6 +119,42 @@ namespace orderfood.Controllers
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction(nameof(Index));
+      
         }
-    }
+     
+        // 1. شاشة إنشاء الحساب
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View("~/Views/FoodItems/Register.cshtml");
+        }
+
+        [HttpPost]
+        public IActionResult Register(string username, string email, string password, string role)
+        {
+            return RedirectToAction("Login");
+        }
+
+        // 2. شاشة تسجيل الدخول
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View("~/Views/FoodItems/Login.cshtml");
+        }
+
+        [HttpPost]
+        public IActionResult Login(string username, string password, string role)
+        {
+            // التحقق الصارم من الحساب المنشود
+            if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password) && username.Trim() == "admin" && password == "123456")
+            {
+                return RedirectToAction("Index", new { role = role });
+            }
+
+            // إرسال رسالة الخطأ في حال كانت البيانات غير مسجلة
+            ViewData["ErrorMessage"] = "Wrong username or password";
+            return View("~/Views/FoodItems/Login.cshtml");
+        }
+
+    } 
 }

@@ -29,10 +29,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthorization();
-
-//  ÂÌ «·’›Õ… «·—∆Ì”Ì… ··„Êﬁ⁄
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=FoodItems}/{action=Index}/{id?}");
-
 app.Run();
